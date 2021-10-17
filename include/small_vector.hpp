@@ -4,26 +4,55 @@
 
 template <typename T, size_t N = 0>
 class small_vector {
-	size_t num_of_items = 0;
+	size_t count = 0;
 	T buffer[N];
 
 	size_t heap_capacity = 0;
-	T* heap = nullptr;
+	size_t heap_size = 0;
+	T* heap = new int[0];
 
-	void realloc();
+	void realloc(size_t new_capacity) {
+		heap_capacity = new_capacity;
+		int* temp = new int[heap_capacity];
+		for (size_t i = 0; i < heap_size; i++)
+			temp[i] = std::move(heap[i]);
+		delete[] heap;
+		heap = temp;
+	}
 
 public:
-	constexpr size_t size() const { return num_of_items; }
+	~small_vector() {
+		delete[] heap;
+	}
+
+	constexpr size_t size() const { return count; }
 	constexpr size_t capacity() const { return N + heap_capacity; }
 
-	T& operator[](const size_t& index) { return buffer[index]; }
-	const T& operator[](const size_t& index) const { return buffer[index]; }
+	T& operator[](const size_t& index) {
+		if (index < N)
+			return buffer[index];
+		else
+			return heap[index - N];
+	}
+	const T& operator[](const size_t& index) const {
+		return this[index];
+	}
 
-	T pop() {
-		num_of_items = num_of_items == 0 ? 0 : num_of_items - 1;
-		return std::move(buffer[num_of_items]);
+	void pop() {
+		if (count != 0)
+			count--;
+		if (heap_size != 0) {
+			heap_size--;
+		}
 	}
 	void push(T item) {
-		buffer[num_of_items++] = item;
+		if (count >= N) {
+			if (heap_size == heap_capacity)
+				realloc(heap_capacity * 2 + 1);
+			heap[heap_size++] = item;
+			count++;
+		} else {
+			buffer[count++] = item;
+		}
 	}
 };

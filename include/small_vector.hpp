@@ -49,7 +49,7 @@ public:
 	}
 
 	void shrink() {
-		if (count > N)
+		if (count >= N)
 			realloc(heap_size);
 	}
 

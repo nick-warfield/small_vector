@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-TEST_CASE("Small Vector no realloc") {
+TEST_CASE("push/pop no realloc") {
 	small_vector<int, 10> vec;
 	REQUIRE(vec.size() == 0);
 	REQUIRE(vec.capacity() == 10);
@@ -29,7 +29,7 @@ TEST_CASE("Small Vector no realloc") {
 	REQUIRE(vec.capacity() == 10);
 }
 
-TEST_CASE("Small Vector realloc") {
+TEST_CASE("push/pop with realloc") {
 	small_vector<int, 10> vec;
 	for (size_t i = 0; i < 10; i++) {
 		vec.push(i);
@@ -69,7 +69,6 @@ TEST_CASE("Capacity shrink without heap") {
 
 TEST_CASE("Capacity shrink with heap") {
 	auto length = GENERATE(take(1, random(26, 1000)));
-	length = 25;
 	small_vector<int, 25> vec;
 	for (int i = 0; i < length; i++) {
 		vec.push(i);
@@ -80,4 +79,15 @@ TEST_CASE("Capacity shrink with heap") {
 	REQUIRE(og_size == vec.size());
 	REQUIRE(og_cap >= vec.capacity());
 	REQUIRE(vec.size() == vec.capacity());
+}
+
+TEST_CASE("clear") {
+	auto length = GENERATE(take(1, random(0, 1000)));
+	small_vector<int, 25> vec;
+	for (int i = 0; i < length; i++) {
+		vec.push(i);
+	}
+	vec.clear();
+	REQUIRE(vec.size() == 0);
+	REQUIRE(vec.capacity() == 25);
 }

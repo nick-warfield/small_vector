@@ -12,13 +12,13 @@ class small_vector {
 	T* heap = new int[0];
 
 	void realloc(size_t new_capacity) {
+		heap_size = std::min(heap_size, new_capacity);
 		heap_capacity = new_capacity;
 		int* temp = new int[heap_capacity];
 		for (size_t i = 0; i < heap_size; i++)
 			temp[i] = std::move(heap[i]);
 		delete[] heap;
 		heap = temp;
-		heap_size = std::min(heap_size, heap_capacity);
 	}
 
 public:

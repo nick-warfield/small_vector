@@ -18,6 +18,7 @@ class small_vector {
 			temp[i] = std::move(heap[i]);
 		delete[] heap;
 		heap = temp;
+		heap_size = std::min(heap_size, heap_capacity);
 	}
 
 public:
@@ -27,6 +28,7 @@ public:
 
 	constexpr size_t size() const { return count; }
 	constexpr size_t capacity() const { return N + heap_capacity; }
+	constexpr bool is_empty() const { return count == 0; }
 
 	T& operator[](const size_t& index) {
 		if (index < N)
@@ -37,6 +39,11 @@ public:
 	const T& operator[](const size_t& index) const {
 		return this[index];
 	}
+
+	T& front() { return buffer[0]; }
+	const T& front() const { return buffer[0]; }
+	T& back() { return this[count - 1]; }
+	const T& back() const { return this[count - 1]; }
 
 	void pop() {
 		if (count != 0)

@@ -40,6 +40,24 @@ public:
 		return this[index];
 	}
 
+	void resize(size_t new_capacity) {
+		if (new_capacity < N)
+			realloc(0);
+		else
+			realloc(new_capacity - N);
+		count = std::min(count, new_capacity);
+	}
+
+	void shrink() {
+		if (count > N)
+			realloc(heap_size);
+	}
+
+	void clear() {
+		realloc(0);
+		count = 0;
+	}
+
 	T& front() { return buffer[0]; }
 	const T& front() const { return buffer[0]; }
 	T& back() { return this[count - 1]; }

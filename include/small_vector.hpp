@@ -26,6 +26,40 @@ public:
 		delete[] heap;
 	}
 
+	struct Iterator {
+		Iterator(size_t index, small_vector<T, N> * ptr) :
+			m_index(index), m_ptr(ptr) { }
+
+		int index() const { return m_index; }
+		T& operator*() { return m_ptr->operator[](m_index); }
+
+		bool operator==(const Iterator& other) const {
+			return m_index == other.m_index && m_ptr == other.m_ptr;
+		}
+		bool operator!=(const Iterator& other) const {
+			return m_index != other.m_index || m_ptr != other.m_ptr;
+		}
+
+		// pre increment
+		const Iterator& operator++() {
+			m_index += m_index != m_ptr->size();
+			return *this;
+		}
+		// post increment
+		Iterator operator++(int) {
+			auto output = *this;
+			m_index += m_index != m_ptr->size();
+			return output;
+		}
+
+	private:
+		size_t m_index;
+		small_vector<T, N> * m_ptr;
+	};
+
+	Iterator begin() { return Iterator(0, this); }
+	Iterator end() { return Iterator(count, this); }
+
 	constexpr size_t size() const { return count; }
 	constexpr size_t capacity() const { return N + heap_capacity; }
 	constexpr bool is_empty() const { return count == 0; }

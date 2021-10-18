@@ -129,3 +129,24 @@ TEST_CASE("vector resize() delete items") {
 	REQUIRE(vec.capacity() <= og_cap);
 }
 
+TEST_CASE("Iterator") {
+	small_vector<int, 20> vec;
+	int count = 0;
+	for (auto i : vec) {
+		i++;
+		count++;
+	}
+	REQUIRE(count == 0);
+	REQUIRE(vec.begin() == vec.end());
+
+	for (int i = 0; i < 100; i++) {
+		vec.push(i);
+	}
+
+	for (auto i : vec) {
+		REQUIRE(i == count);
+		count++;
+	}
+	REQUIRE(count == 100);
+	REQUIRE(vec.begin() != vec.end());
+}

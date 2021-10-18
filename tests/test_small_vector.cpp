@@ -143,10 +143,15 @@ TEST_CASE("Iterator") {
 		vec.push(i);
 	}
 
-	for (auto i : vec) {
+	for (auto& i : vec) {
 		REQUIRE(i == count);
+		i++;
 		count++;
 	}
 	REQUIRE(count == 100);
 	REQUIRE(vec.begin() != vec.end());
+
+	for (int i = 0; i < 100; i++) {
+		REQUIRE(vec[i] == i + 1);
+	}
 }

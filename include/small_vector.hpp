@@ -94,8 +94,8 @@ public:
 
 	T& front() { return buffer[0]; }
 	const T& front() const { return buffer[0]; }
-	T& back() { return this[count - 1]; }
-	const T& back() const { return this[count - 1]; }
+	T& back() { return this->operator[](count - 1); }
+	const T& back() const  { return this->operator[](count - 1); }
 
 	void pop() {
 		if (count != 0)

@@ -53,7 +53,7 @@ TEST_CASE("push/pop with realloc") {
 	}
 }
 
-TEST_CASE("Capacity shrink without heap") {
+TEST_CASE("vector shrink() without heap") {
 	auto length = GENERATE(take(1, random(0, 25)));
 	small_vector<int, 25> vec;
 	for (int i = 0; i < length; i++) {
@@ -67,7 +67,7 @@ TEST_CASE("Capacity shrink without heap") {
 	REQUIRE(vec.size() <= vec.capacity());
 }
 
-TEST_CASE("Capacity shrink with heap") {
+TEST_CASE("vector shrink() with heap") {
 	auto length = GENERATE(take(1, random(26, 1000)));
 	small_vector<int, 25> vec;
 	for (int i = 0; i < length; i++) {
@@ -81,7 +81,7 @@ TEST_CASE("Capacity shrink with heap") {
 	REQUIRE(vec.size() == vec.capacity());
 }
 
-TEST_CASE("clear") {
+TEST_CASE("vector clear()") {
 	auto length = GENERATE(take(1, random(0, 1000)));
 	small_vector<int, 25> vec;
 	for (int i = 0; i < length; i++) {
@@ -91,3 +91,41 @@ TEST_CASE("clear") {
 	REQUIRE(vec.size() == 0);
 	REQUIRE(vec.capacity() == 25);
 }
+
+TEST_CASE("vector resize() no delete items") {
+	auto length = GENERATE(take(1, random(0, 99)));
+	small_vector<int, 50> vec;
+	for (int i = 0; i < length; i++) {
+		vec.push(i);
+	}
+	auto og_size = vec.size();
+	auto og_cap = vec.capacity();
+	auto lo_cap = GENERATE_COPY(
+			take(1, random(og_size, og_cap - 1)));
+	auto hi_cap = GENERATE_COPY(
+			take(1, random(og_cap, (size_t)200)));
+
+	vec.resize(lo_cap);
+	REQUIRE(vec.size() == og_size);
+	REQUIRE(vec.capacity() <= og_cap);
+	vec.resize(hi_cap);
+	REQUIRE(vec.size() == og_size);
+	REQUIRE(vec.capacity() >= og_cap);
+}
+
+TEST_CASE("vector resize() delete items") {
+	auto length = GENERATE(take(1, random(0, 99)));
+	small_vector<int, 50> vec;
+	for (int i = 0; i < length; i++) {
+		vec.push(i);
+	}
+	auto og_size = vec.size();
+	auto og_cap = vec.capacity();
+	auto new_cap = GENERATE_COPY(
+			take(1, random((size_t)0, og_size - 1)));
+
+	vec.resize(new_cap);
+	REQUIRE(vec.size() < og_size);
+	REQUIRE(vec.capacity() <= og_cap);
+}
+
